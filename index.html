@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memorama</title>
+    <link rel="stylesheet" src="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Sigmar&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("https://i.pinimg.com/564x/ce/6a/66/ce6a66ebcfab91eeb9aabb564e64862e.jpg");            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: auto;
+            margin: 0;
+            font-family: "Sigmar";
+            flex-direction: column;
+            padding: 0;
+        }
+        #header {
+            width: 100%;
+            background-image: url("https://i.pinimg.com/564x/c0/18/c3/c018c3178d74549993e342c3419b4dad.jpg");  
+            background-repeat: repeat-x;
+            color: rgb(239, 169, 48);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        #menu {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #f92c0d;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+        .card {
+            background: #f50202;
+            height: 200px;
+            width: 215px;
+            display: inline-block;
+            margin: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            opacity: 1;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            position: relative;
+
+            
+        }
+        .card img {
+            height: 100%;
+            width: 100%;
+            border-radius: 10px;
+            position: absolute;
+            backface-visibility: hidden;
+        }
+        .card .back {
+            transform: rotateY(180deg);
+            background: pink; /* Cambiar a color rosa */
+            opacity: 1;
+        }
+        .card.flipped {
+            opacity: 1;
+            box-shadow: 0 5px 10px rgba(238, 229, 229, 0.3);
+            transform: rotateY(180deg);
+        }
+        #reset {
+            padding: 10px 20px;
+            font-size: 20px;
+            font-family: "Sigmar";
+            background: #f33005;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>Memorama</h1>
+    </div>
+    <div id="menu">
+        <a href="https://github.com/SandiaaDiaz">Sandra Daniela Diaz Martinez</a>
+        <a href="https://www.canva.com/design/DAGE5WY0hdU/b7Ixib5a10db7dvZbuV85g/view?utm_content=DAGE5WY0hdU&utm_campaign=designshare&utm_medium=link&utm_source=editor">Sobre</a>
+        <a href="https://github.com/SandiaaDiaz/juego_1">Más juegos</a>
+    </div>
+    <div id="game"></div>
+    <button id="reset">Reiniciar</button>
+
+    <script>
+        var flipSound = new Audio('flip.wav');
+
+        // Ruta a la carpeta de imágenes
+        var carpeta_imagenes = 'animales';
+        var imagenes = [
+            '1.png',
+            '2.png',
+            '3.png',
+            '4.png',
+            '5.png',
+            '6.png',
+            '7.png',
+            '8.png',
+            '9.png'
+        ];
+
+        // Duplicar las imágenes para formar pares
+        imagenes = imagenes.concat(imagenes);
+        imagenes.sort(() => 0.5 - Math.random());
+
+        // Crear las cartas del juego con las imágenes
+        var game = document.getElementById('game');
+        var cards = [];
+        for (var i = 0; i < imagenes.length; i++) {
+            var card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.item = imagenes[i];
+            card.innerHTML = '<img class="front" src="https://i.pinimg.com/564x/00/61/52/006152ce95e45c646a70a5389c4807bb.jpg" /><img class="back" src="' + carpeta_imagenes + '/' + imagenes[i] + '" />';
+            card.addEventListener('click', flipCard);
+            game.appendChild(card);
+            cards.push(card);
+        }
+
+        var flippedCards = [];
+        function flipCard() {
+            if (flippedCards.length === 2) {
+                return;
+            }
+            flipSound.play();
+            this.classList.add('flipped');
+            flippedCards.push(this);
+            if (flippedCards.length === 2) {
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            var match = flippedCards[0].dataset.item === flippedCards[1].dataset.item;
+            if (!match) {
+                setTimeout(function() {
+                    flippedCards[0].classList.remove('flipped');
+                    flippedCards[1].classList.remove('flipped');
+                    flippedCards = [];
+                }, 1000);
+            } else {
+                flippedCards = [];
+            }
+        }
+
+        document.getElementById('reset').addEventListener('click', function() {
+            cards.forEach(function(card) {
+                card.classList.remove('flipped');
+            });
+            flippedCards = [];
+        });
+    </script>
+</body>
+</html>
